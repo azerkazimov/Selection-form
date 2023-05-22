@@ -22,18 +22,56 @@ let category1 = document.getElementById("category1");
 let category2 = document.getElementById("category2");
 let button = document.querySelector("#addButton");
 
-let data = ["Subcategory B.A", "Subcategory B.B", "Subcategory B.C"];
+const categories = [
+  {
+    name: "Category 1",
+    subcategories: ["Subcategory 1-1", "Subcategory 1-2", "Subcategory 1-3"],
+  },
+  {
+    name: "Category 2",
+    subcategories: ["Subcategory 2-1", "Subcategory 2-2", "Subcategory 2-3"],
+  },
+  {
+    name: "Category 3",
+    subcategories: [],
+  },
+  {
+    name: "Category 4",
+    subcategories: ["Subcategory 4-1", "Subcategory 4-2"],
+  },
+  {
+    name: "Category 5",
+    subcategories: [],
+  },
+];
+
+categories.forEach((category) => {
+  let option = document.createElement("option");
+  option.value = category.name;
+  option.text = category.name;
+  category1.appendChild(option);
+});
 
 category1.addEventListener("change", function (e) {
   e.preventDefault();
   let valueSelect = this.value;
-  if (valueSelect === "B") {
-    category2.innerHTML = '<option value="">Select a category</option>';
-    for (let i in data) {
-      category2.innerHTML += `<option value="${i}">${data[i]}</option>`;
+  let selectCategory = categories.find(
+    (category) => category.name === valueSelect
+  );
+
+  if (selectCategory) {
+    category2.innerHTML = `<option value="">Select a category </option>`;
+
+    if (selectCategory.subcategories.length > 0) {
+      selectCategory.subcategories.forEach((subcategory) => {
+        let option = document.createElement("option");
+        option.value = subcategory;
+        option.text = subcategory;
+        category2.appendChild(option);
+      });
+    } else {
+      category2.innerHTML = `<option value="">Have not category</option>`;
     }
-  } else {
-    category2.innerHTML = '<option value="">Have not category</option>';
   }
 });
 
@@ -49,7 +87,16 @@ button.addEventListener("click", function (e) {
   let category1Value = category1.options[category1.selectedIndex].text;
   let category2Value = category2.options[category2.selectedIndex].text;
 
-  if (category2Value === "Have not category") {
+  let isAdded = Array.from(box.children).some((child) =>
+    child.textContent.includes(category1Value)
+  );
+  let isAddedSub = Array.from(box.children).some((child) =>
+    child.textContent.includes(category2Value)
+  );
+
+  if (isAdded && isAddedSub) {
+    alert("Added");
+  } else if (isAddedSub && category2Value === "Have not category") {
     content.textContent = `${category1Value}`;
     box.appendChild(content);
     content.appendChild(close);
